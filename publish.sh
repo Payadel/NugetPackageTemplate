@@ -3,7 +3,7 @@
 # Set options to exit immediately if any command fails (-e) and treat unset variables as errors (-u)
 set -eu
 
-output_dir="Releases"
+output_dir="artifacts"
 output="$output_dir/$(date "+%Y-%m-%d_%H-%M-%S")"
 
 # Function to check if a directory is empty
@@ -28,25 +28,6 @@ get_confirm() {
     *) return 1 ;;
     esac
 }
-
-# Function to find file with type in subdirectories
-find_file() {
-    local file_type="$1"
-    local search_dir="$2"
-    if [ -z "$search_dir" ]; then
-        search_dir="."
-    fi
-
-    local target_file
-    target_file=$(find . -type f -name "*.$file_type" | head -n 1)
-
-    if [ -z "$target_file" ]; then
-        return 1
-    else
-        echo "$target_file"
-        return 0
-    fi
-}
 #========================================================================
 # main
 
@@ -60,42 +41,12 @@ fi
 # Create new directory for new release
 mkdir -p "$output"
 
-# Find csproj file path
-csproj=$(find_file "csproj" ".")
-if [ -z "$csproj" ]; then
-    read -rp "Please enter the path where the .csproj file is located: " user_path
-
-    if [ -z "$user_path" ]; then
-        echo "No path entered. Exiting."
-        exit 1
-    fi
-
-    if [ -d "$user_path" ]; then
-        csproj=$(find "$user_path" -type f -name '*.csproj' | head -n 1)
-        if [ -z "$csproj" ]; then
-            echo "No .csproj file found in the specified path: $user_path"
-            exit 1
-        fi
-    else
-        if [ ! -f "$user_path" ]; then
-            echo "Invalid path: $user_path does not exist."
-            exit 1
-        fi
-    fi
-fi
-
 # Build package
-dotnet pack "$csproj" -c Release -o "$output"
+dotnet pack src --configuration Release --output "$output"
 echo ""
-echo "Package build in: $output/"
+echo "Output: $output/"
 
 if get_confirm "Do you want to publish it to nuget manually"; then
-    nupkg=$(find_file "nupkg" $output_dir)
-    if [ -z "$nupkg" ]; then
-        echo "Can not find .nupkg file to publish."
-        read -rp "nupkg file path: " nupkg
-    fi
-
     read -rsp "Enter your api key: " SECRET_KEY
-    dotnet nuget push "$nupkg" --source "https://api.nuget.org/v3/index.json" --api-key "$SECRET_KEY"
+    dotnet nuget push "$output/*.nupkg" --api-key $SECRET_KEY --source https://api.nuget.org/v3/index.json
 fi
