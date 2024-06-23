@@ -1,0 +1,36 @@
+name: Build, Test and Deploy NuGet Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.x'  # Replace with the version you're using
+
+    - name: Restore dependencies
+      run: dotnet restore src
+
+    - name: Build
+      run: dotnet build src --configuration Release
+
+    - name: Test
+      run: dotnet test src --configuration Release
+
+    - name: Publish NuGet package
+      if: success()
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}  # Make sure to add this secret to your repository
+      run: |
+        dotnet pack src --configuration Release --output ../artifacts
+        dotnet nuget push ../artifacts/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
