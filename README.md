@@ -1,5 +1,5 @@
 <div align="center">
-  Nuget Package Template
+  <h1>Nuget Package Template</h1>
   <br />
   <a href="#getting-started"><strong>Getting Started »</strong></a>
   <br />
