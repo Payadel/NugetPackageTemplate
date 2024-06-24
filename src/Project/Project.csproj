@@ -6,4 +6,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <PackageId>MyNuGetPackage</PackageId>
+        <Description>Description</Description>
+        <Version>0.0.1</Version>
+        <PackageTags>tag1; tag2; tag3</PackageTags>
+        <Authors>Payadel Team</Authors>
+        <RepositoryUrl>hhttps://github.com/payadel</RepositoryUrl>
+        <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    </PropertyGroup>
+
 </Project>

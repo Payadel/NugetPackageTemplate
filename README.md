@@ -26,7 +26,12 @@ The template includes:
 Whether you are building libraries, tools, or other reusable components, this template provides a solid foundation to
 help you focus on developing great software without worrying about the initial setup.
 
-# Structure
+## Package Metadata
+
+Update package metadata in `./src/Project/Project.csproj` file.
+For more information please see [Package metadata](https://learn.microsoft.com/en-us/nuget/create-packages/package-authoring-best-practices#package-metadata).
+
+## Structure
 
 ```
 ├── LICENSE
